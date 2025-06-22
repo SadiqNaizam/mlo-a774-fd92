@@ -1,9 +1,10 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { Moon, Sun } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,18 @@ interface LoginFormCardProps {
 }
 
 const LoginFormCard: React.FC<LoginFormCardProps> = ({ className }) => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+  
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,8 +66,17 @@ const LoginFormCard: React.FC<LoginFormCardProps> = ({ className }) => {
 
   return (
     <Card className={cn("w-[24rem] bg-card text-card-foreground", className)}>
-      <CardHeader>
+      <CardHeader className="relative">
         <CardTitle className="text-center text-2xl font-bold">Welcome</CardTitle>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+          className="absolute top-6 right-6"
+        >
+          {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+          <span className="sr-only">Toggle theme</span>
+        </Button>
       </CardHeader>
       <CardContent>
         <Form {...form}>
